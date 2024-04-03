@@ -17,10 +17,19 @@ jobs:
         script: |
           const message = "Congratulations! Code has been pushed to the repository.";
           const octokit = context.octokit;
-          await octokit.rest.issues.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.payload.repository.id,
-            body: message
-          });
-
+          // Check if octokit is defined
+          if (octokit) {
+            // Check if rest property is defined
+            if (octokit.rest) {
+              await octokit.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.repository.id,
+                body: message
+              });
+            } else {
+              console.error("Octokit rest property is undefined");
+            }
+          } else {
+            console.error("Octokit instance is undefined");
+          }
