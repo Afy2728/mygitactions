@@ -1,0 +1,28 @@
+name: Congrats on Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  send-congrats:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Send Congrats Comment
+      uses: actions/github-script@v4
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const message = "Congratulations! Code has been pushed to the repository.";
+          const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+          await octokit.issues.createComment({
+            owner: process.env.GITHUB_REPOSITORY_OWNER,
+            repo: process.env.GITHUB_REPOSITORY,
+            issue_number: process.env.GITHUB_EVENT_NUMBER,
+            body: message
+          });
